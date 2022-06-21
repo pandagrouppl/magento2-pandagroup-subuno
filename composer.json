@@ -1,0 +1,21 @@
+{
+    "name": "pandagrouppl/magento2-pandagroup-subuno",
+    "description": "Magento 2 module to connect sales with Subuno order reviewing process",
+    "version": "1.0.0",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PandaGroup",
+            "email": "developers@pandagroup.co"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0 || ^8.1",
+        "pandagrouppl/subuno-php-api": "^1"
+    },
+    "autoload": {
+        "psr-4": {"PandaGroup\\Subuno\\": ""},
+        "files": ["registration.php"]
+    }
+}

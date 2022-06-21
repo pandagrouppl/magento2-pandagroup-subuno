@@ -1,0 +1,14 @@
+{
+    "subuno_response": {
+        "column": {
+            "id": true,
+            "action": true,
+            "reference_code": true,
+            "transaction_id": true,
+            "raw_response": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

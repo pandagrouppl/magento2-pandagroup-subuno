@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="PandaGroup\SubunoApi\Contract\ConfigInterface" type="PandaGroup\Subuno\Model\Config"/>
+    <preference for="PandaGroup\Subuno\Api\Data\SubunoResponseInterface" type="PandaGroup\Subuno\Model\SubunoResponse"/>
+    <preference for="PandaGroup\Subuno\Api\SubunoResponseRepositoryInterface" type="PandaGroup\Subuno\Model\SubunoResponseRepository"/>
+    <virtualType name="PandaGroup\Subuno\Model\CustomLogFile" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/pandagroup_subuno.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PandaGroup\Subuno\Model\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="pandagroup_subuno_logger" xsi:type="object">PandaGroup\Subuno\Model\CustomLogFile</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="PandaGroup\Subuno\Service\Connector">
+        <arguments>
+            <argument name="logger" xsi:type="object">PandaGroup\Subuno\Model\Logger</argument>
+            <argument name="transformers" xsi:type="array">
+                <item name="order_info" xsi:type="object">PandaGroup\Subuno\Transformer\OrderInformation</item>
+                <item name="billing_info" xsi:type="object">PandaGroup\Subuno\Transformer\BillingInformation</item>
+                <item name="shipping_info" xsi:type="object">PandaGroup\Subuno\Transformer\ShippingInformation</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Sales\Model\Order\Payment">
+        <plugin name="fraud_prevention_before" type="PandaGroup\Subuno\Plugin\FraudPreventionBefore"/>
+        <plugin name="fraud_prevention_after" type="PandaGroup\Subuno\Plugin\FraudPreventionAfter"/>
+    </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="pandagroup_subuno_save_subuno_response" type="PandaGroup\Subuno\Plugin\OrderRepositorySaveSubunoResponse"/>
+        <plugin name="pandagroup_subuno_load_subuno_response" type="PandaGroup\Subuno\Plugin\OrderRepositoryLoadSubunoResponse"/>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <plugin name="pandagroup_subuno_load_subuno_response_in_grid" type="PandaGroup\Subuno\Plugin\SalesOrderGridLoadSubunoResponse" />
+    </type>
+</config>

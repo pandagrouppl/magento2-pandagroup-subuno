@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <subuno>
+            <general>
+                <enable>0</enable>
+            </general>
+            <connection>
+                <base_uri>https://api.subuno.com</base_uri>
+            </connection>
+            <cron>
+                <expression>*/10 * * * *</expression>
+                <batch>20</batch>
+            </cron>
+        </subuno>
+    </default>
+</config>
