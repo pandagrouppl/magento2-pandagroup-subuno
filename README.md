@@ -38,20 +38,20 @@ With our stable and reliable technology stack, you can rest assured that your si
 To your composer.json file add configuration about custom repository:
 ```
 "repositories": {
-    "pandagroup/subuno-php-api": {
+    "pandagrouppl/subuno-php-api": {
             "type": "vcs",
-            "url": "git@bitbucket.org:l4w/subuno-php-api.git"
+            "url": "git@github.com:pandagrouppl/subuno-php-api.git"
     },
-    "pandagroup/magento2-pandagroup-subuno": {
+    "pandagrouppl/magento2-pandagroup-subuno": {
             "type": "vcs",
-            "url": "git@bitbucket.org:l4w/magento2-pandagroup-subuno.git"
+            "url": "git@github.com:pandagrouppl/magento2-pandagroup-subuno.git"
     }
 }
 ```
 
-As you can see, Magento 2 module has dependencies on SDK pandagroup/subuno-php-api - it also has to be configured and installed via Composer. When the config in composer.json is ready, run
+As you can see, Magento 2 module has dependencies on SDK pandagrouppl/subuno-php-api - it also has to be configured and installed via Composer. When the config in composer.json is ready, run
 ```
-composer require pandagroup/magento2-pandagroup-subuno:^1
+composer require pandagrouppl/magento2-pandagroup-subuno:^1
 ```
 
 3. Configuration
