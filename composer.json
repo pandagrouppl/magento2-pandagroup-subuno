@@ -8,6 +8,10 @@
         {
             "name": "PandaGroup",
             "email": "developers@pandagroup.co"
+        },
+        {
+            "name": "Paweł Micnas",
+            "email": "pawelmicnas@gmail.com"
         }
     ],
     "require": {
