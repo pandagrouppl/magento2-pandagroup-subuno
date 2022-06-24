@@ -10,6 +10,7 @@ use PandaGroup\Subuno\Api\Data\SubunoResponseInterface;
 use PandaGroup\Subuno\Exception\SubunoRejectException;
 use PandaGroup\Subuno\Plugin\FraudPreventionBefore;
 use PandaGroup\Subuno\Model\Config;
+use PandaGroup\Subuno\Service\Comparator\IsActionReject;
 use PandaGroup\Subuno\Service\Connector;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -33,6 +34,9 @@ class FraudPreventionBeforeTest extends BaseTestCase
     /** @var MockObject|SubunoResponseInterface */
     private MockObject $subunoResponseMock;
 
+    /** @var MockObject|IsActionReject */
+    private MockObject $isActionRejectMock;
+
     /** @var object|FraudPreventionBefore */
     private object $subject;
 
@@ -42,6 +46,7 @@ class FraudPreventionBeforeTest extends BaseTestCase
         $arguments = $this->objectManager->getConstructArguments(FraudPreventionBefore::class);
         $this->configMock = $arguments['config'];
         $this->connectorMock = $arguments['connector'];
+        $this->isActionRejectMock = $arguments['isActionReject'];
         $this->paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)->addMethods(['getOrder'])->getMockForAbstractClass();
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)->addMethods(['addStatusHistoryComment'])->getMockForAbstractClass();
         $this->extensionAttributesMock = $this->getMockBuilder(OrderExtensionInterface::class)
@@ -110,6 +115,7 @@ class FraudPreventionBeforeTest extends BaseTestCase
         $this->orderMock->method('setExtensionAttributes')->willReturnSelf();
         $this->paymentMock->method('getOrder')->willReturn($this->orderMock);
         $this->subunoResponseMock->method('getAction')->willReturn('reject');
+        $this->isActionRejectMock->method('execute')->willReturn(true);
         $this->connectorMock->expects($this->once())->method('execute')->willReturn($this->subunoResponseMock);
         $this->expectException(SubunoRejectException::class);
         $this->subject->beforePlace($this->paymentMock);
