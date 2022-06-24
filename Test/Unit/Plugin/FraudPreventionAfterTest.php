@@ -9,7 +9,9 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use PandaGroup\Subuno\Api\Data\SubunoResponseInterface;
 use PandaGroup\Subuno\Model\Config;
+use PandaGroup\Subuno\Modifier\OrderStatusModifier;
 use PandaGroup\Subuno\Plugin\FraudPreventionAfter;
+use PandaGroup\Subuno\Service\Comparator\IsActionReject;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class FraudPreventionAfterTest extends BaseTestCase
@@ -29,6 +31,12 @@ class FraudPreventionAfterTest extends BaseTestCase
     /** @var MockObject|SubunoResponseInterface */
     private MockObject $subunoResponseMock;
 
+    /** @var MockObject|IsActionReject */
+    private MockObject $isActionRejectMock;
+
+    /** @var MockObject|OrderStatusModifier  */
+    private MockObject $orderStatusModifierMock;
+
     /** @var object|FraudPreventionAfter */
     private object $subject;
 
@@ -37,9 +45,11 @@ class FraudPreventionAfterTest extends BaseTestCase
         parent::setUp();
         $arguments = $this->objectManager->getConstructArguments(FraudPreventionAfter::class);
         $this->configMock = $arguments['config'];
+        $this->isActionRejectMock = $arguments['isActionReject'];
+        $this->orderStatusModifierMock = $arguments['orderStatusModifier'];
         $this->paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)->addMethods(['getOrder'])->getMockForAbstractClass();
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)->addMethods(['addStatusHistoryComment'])->getMockForAbstractClass();
-        $this->extensionAttributesMock = $this->getMockBuilder(OrderExtensionInterface::class)->getMockForAbstractClass();
+        $this->extensionAttributesMock = $this->getMockBuilder(OrderExtensionInterface::class)->addMethods(['getSubunoResponse'])->getMockForAbstractClass();
         $this->subunoResponseMock = $this->getMockBuilder(SubunoResponseInterface::class)->getMockForAbstractClass();
         $this->subject = $this->objectManager->getObject(FraudPreventionAfter::class, $arguments);
     }
@@ -96,12 +106,11 @@ class FraudPreventionAfterTest extends BaseTestCase
         $this->configMock->method('whenRun')->willReturn(1);
         $this->configMock->method('rejectAction')->willReturn(1);
         $this->subunoResponseMock->method('getAction')->willReturn('reject');
+        $this->isActionRejectMock->method('execute')->willReturn(true);
         $this->extensionAttributesMock->method('getSubunoResponse')->willReturn($this->subunoResponseMock);
         $this->orderMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $this->paymentMock->method('getOrder')->willReturn($this->orderMock);
-        $this->orderMock->expects($this->once())->method('setState')->with(Order::STATE_HOLDED)->willReturnSelf();
-        $this->orderMock->expects($this->once())->method('setStatus')->with(Order::STATUS_FRAUD)->willReturnSelf();
-        $this->orderMock->expects($this->once())->method('addStatusHistoryComment')->willReturnSelf();
+        $this->orderStatusModifierMock->expects($this->once())->method('execute')->with($this->orderMock, Order::STATE_HOLDED, Order::STATUS_FRAUD);
         $this->subject->afterPlace($this->paymentMock, $this->paymentMock);
     }
 
@@ -111,12 +120,11 @@ class FraudPreventionAfterTest extends BaseTestCase
         $this->configMock->method('whenRun')->willReturn(1);
         $this->configMock->method('rejectAction')->willReturn(2);
         $this->subunoResponseMock->method('getAction')->willReturn('reject');
+        $this->isActionRejectMock->method('execute')->willReturn(true);
         $this->extensionAttributesMock->method('getSubunoResponse')->willReturn($this->subunoResponseMock);
         $this->orderMock->method('getExtensionAttributes')->willReturn($this->extensionAttributesMock);
         $this->paymentMock->method('getOrder')->willReturn($this->orderMock);
-        $this->orderMock->expects($this->once())->method('setState')->with(Order::STATE_CANCELED)->willReturnSelf();
-        $this->orderMock->expects($this->once())->method('setStatus')->with(Order::STATUS_FRAUD)->willReturnSelf();
-        $this->orderMock->expects($this->once())->method('addStatusHistoryComment')->willReturnSelf();
+        $this->orderStatusModifierMock->expects($this->once())->method('execute')->with($this->orderMock, Order::STATE_CANCELED, Order::STATUS_FRAUD);
         $this->subject->afterPlace($this->paymentMock, $this->paymentMock);
     }
 }

@@ -6,17 +6,20 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use PandaGroup\Subuno\Exception\SubunoRejectException;
 use PandaGroup\Subuno\Model\Config;
+use PandaGroup\Subuno\Service\Comparator\IsActionReject;
 use PandaGroup\Subuno\Service\Connector;
 
 class FraudPreventionBefore
 {
     private Config $config;
     private Connector $connector;
+    private IsActionReject $isActionReject;
 
-    public function __construct(Connector $connector, Config $config)
+    public function __construct(Connector $connector, Config $config, IsActionReject $isActionReject)
     {
         $this->config = $config;
         $this->connector = $connector;
+        $this->isActionReject = $isActionReject;
     }
 
     /**
@@ -34,7 +37,7 @@ class FraudPreventionBefore
         $attributes->setSubunoResponse($subunoResponse);
         $order->setExtensionAttributes($attributes);
 
-        if ($this->shouldThrownError() && $this->isActionReject($subunoResponse->getAction())) {
+        if ($this->shouldThrownError() && $this->isActionReject->execute($subunoResponse->getAction())) {
             throw new SubunoRejectException(__($this->config->getErrorMessage()));
         }
 
@@ -51,10 +54,5 @@ class FraudPreventionBefore
     private function shouldThrownError(): bool
     {
         return $this->config->rejectAction() === Config\Source\Rejects::ORDER_ERROR;
-    }
-
-    private function isActionReject(?string $action): bool
-    {
-        return $action === 'reject';
     }
 }

@@ -44,7 +44,9 @@ class FraudPreventionBeforeTest extends BaseTestCase
         $this->connectorMock = $arguments['connector'];
         $this->paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)->addMethods(['getOrder'])->getMockForAbstractClass();
         $this->orderMock = $this->getMockBuilder(OrderInterface::class)->addMethods(['addStatusHistoryComment'])->getMockForAbstractClass();
-        $this->extensionAttributesMock = $this->getMockBuilder(OrderExtensionInterface::class)->getMockForAbstractClass();
+        $this->extensionAttributesMock = $this->getMockBuilder(OrderExtensionInterface::class)
+            ->addMethods(['getSubunoResponse', 'setSubunoResponse'])
+            ->getMockForAbstractClass();
         $this->subunoResponseMock = $this->getMockBuilder(SubunoResponseInterface::class)->getMockForAbstractClass();
         $this->subject = $this->objectManager->getObject(FraudPreventionBefore::class, $arguments);
     }
