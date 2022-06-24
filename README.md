@@ -35,21 +35,7 @@ With our stable and reliable technology stack, you can rest assured that your si
 
 2. Installation
 
-To your composer.json file add configuration about custom repository:
-```
-"repositories": {
-    "pandagrouppl/subuno-php-api": {
-            "type": "vcs",
-            "url": "git@github.com:pandagrouppl/subuno-php-api.git"
-    },
-    "pandagrouppl/magento2-pandagroup-subuno": {
-            "type": "vcs",
-            "url": "git@github.com:pandagrouppl/magento2-pandagroup-subuno.git"
-    }
-}
-```
-
-As you can see, Magento 2 module has dependencies on SDK pandagrouppl/subuno-php-api - it also has to be configured and installed via Composer. When the config in composer.json is ready, run
+Package is available on Packagist, so just run:
 ```
 composer require pandagrouppl/magento2-pandagroup-subuno:^1
 ```
